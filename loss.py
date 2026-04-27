@@ -58,7 +58,7 @@ def vae_loss(x, x_hat, mu, logvar, beta=1.0, logits=True):
 
 
 # Shared β-TCVAE latent stats
-def tcvae_latent_log_terms(mu, logvar, z, dataset_size):
+def tcvae_latent_log_terms(mu, logvar, z):
     """
     Compute the shared log-density quantities needed for MI, TC, and dim-wise KL.
 
@@ -128,14 +128,14 @@ def dimwise_kl_term_from_shared(shared):
     return (shared["log_prod_q_z"] - shared["log_p_z"]).mean()
 
 
-def tc_terms(x, x_hat, mu, logvar, z, dataset_size, logits=True):
+def tc_terms(x, x_hat, mu, logvar, z, logits=True):
     """
     Returns the decomposed β-TCVAE terms:
         distortion, MI, TC, dim-wise KL
     """
     distortion = recon_loss(x, x_hat, logits=logits)
 
-    shared = tcvae_latent_log_terms(mu, logvar, z, dataset_size)
+    shared = tcvae_latent_log_terms(mu, logvar, z)
 
     mi = mi_term_from_shared(shared)
     tc = tc_term_from_shared(shared)
@@ -151,7 +151,6 @@ def beta_tcvae_loss(
     mu,
     logvar,
     z,
-    dataset_size,
     alpha=1.0,
     beta=6.0,
     gamma=1.0,
@@ -159,7 +158,7 @@ def beta_tcvae_loss(
 ):
     distortion = recon_loss(x, x_hat, logits=logits)
 
-    shared = tcvae_latent_log_terms(mu, logvar, z, dataset_size)
+    shared = tcvae_latent_log_terms(mu, logvar, z)
 
     mi = mi_term_from_shared(shared)
     tc = tc_term_from_shared(shared)
