@@ -5,7 +5,7 @@ import torch
 import json
 from datasets import DSpritesDataset
 from model import VAE
-from helpers import make_splits_and_loaders, train_pipeline_beta_tcvae, EarlyStopping, validate_beta_tcvae
+from helpers import make_splits_and_loaders, train_pipeline_beta_tcvae, EarlyStopping, validate_beta_tcvae, set_seed
 from loss import beta_tcvae_loss
 from plotters import save_training_curves_beta_tcvae
 import torch.optim as optim
@@ -41,6 +41,7 @@ def clear_cache():
     print("RAM cache cleared.")
 
 
+set_seed(42)
 clear_cache()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -72,10 +73,15 @@ best_model = VAE(input_channels=1,
                  out_fc_features=256,
                  hidden_channels=32).to(device)
 
+# Start logvar near 0 (posterior variance ≈ 1, close to prior) so all runs
+# begin from a consistent near-prior state regardless of weight seed.
+torch.nn.init.zeros_(best_model.encoder.logvar.weight)
+torch.nn.init.zeros_(best_model.encoder.logvar.bias)
+
 paper_optimizer = optim.AdamW(
     best_model.parameters(),
-    lr=5e-4,
-    weight_decay=1e-4
+    lr=1e-3,
+    weight_decay=1e-3
 )
 
 paper_scheduler = optim.lr_scheduler.CosineAnnealingLR(
@@ -105,7 +111,7 @@ history = train_pipeline_beta_tcvae(
     gamma=1,
     beta_warmup_epochs=50,
     scheduler=paper_scheduler,
-    early_stopping=best_early_stopping,
+    # early_stopping=best_early_stopping,
     scheduler_step_per_batch=False
 )
 
@@ -119,7 +125,7 @@ test_loss, test_recon, test_mi, test_tc, test_dwkl, test_encoder_kl_per_dim = va
     device=device,
     beta_tcvae_loss_fn=beta_tcvae_loss,
     alpha=1.0,
-    beta=15.0,
+    beta=10.0,
     gamma=1.0,
     desc="Test"
 )
