@@ -72,13 +72,20 @@ best_model = VAE(input_channels=1,
                  out_fc_features=256,
                  hidden_channels=32).to(device)
 
-paper_optimizer = optim.Adam(
+paper_optimizer = optim.AdamW(
     best_model.parameters(),
-    lr=5e-4
+    lr=5e-4,
+    weight_decay=1e-4
+)
+
+paper_scheduler = optim.lr_scheduler.CosineAnnealingLR(
+    paper_optimizer,
+    T_max=500,
+    eta_min=1e-5
 )
 
 best_early_stopping = EarlyStopping(
-    patience=10,
+    patience=50,
     min_delta=1e-5,
     mode="min"
 )
@@ -89,17 +96,17 @@ history = train_pipeline_beta_tcvae(
     val_dataloader=val_loader,
     optimizer=paper_optimizer,
     device=device,
-    epochs=100,
+    epochs=500,
     beta_tcvae_loss_fn=beta_tcvae_loss,
     train_dataset_size=train_dataset_size,
     val_dataset_size=val_dataset_size,
     alpha=1,
-    beta=15.0,
+    beta=10.0,
     gamma=1,
-    beta_warmup_epochs=20,
-    scheduler=None,
+    beta_warmup_epochs=50,
+    scheduler=paper_scheduler,
     early_stopping=best_early_stopping,
-    scheduler_step_per_batch=True
+    scheduler_step_per_batch=False
 )
 
 checkpoint_path = os.path.join(DIRS["checkpoints"], "best_paper_beta_vae.pt")
