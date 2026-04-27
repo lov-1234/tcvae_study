@@ -117,7 +117,6 @@ test_loss, test_recon, test_mi, test_tc, test_dwkl, test_encoder_kl_per_dim = va
     model=best_model,
     dataloader=test_loader,
     device=device,
-    dataset_size=train_dataset_size,
     beta_tcvae_loss_fn=beta_tcvae_loss,
     alpha=1.0,
     beta=15.0,
