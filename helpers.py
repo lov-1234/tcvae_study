@@ -312,12 +312,15 @@ def train_pipeline_beta_tcvae(
     return history
 
 
-def make_splits_and_loaders(dataset_cls, dataset_kwargs, batch_size=256, seed=42, num_workers=4):
+def make_splits_and_loaders(
+    dataset_cls, dataset_kwargs, batch_size=256, seed=42,
+    num_workers=4, train_frac=0.8, val_frac=0.1
+):
     full_dataset = dataset_cls(**dataset_kwargs)
 
     n_total = len(full_dataset)
-    n_train = int(0.8 * n_total)
-    n_val = int(0.1 * n_total)
+    n_train = int(train_frac * n_total)
+    n_val = int(val_frac * n_total)
     n_test = n_total - n_train - n_val
 
     generator = torch.Generator().manual_seed(seed)
