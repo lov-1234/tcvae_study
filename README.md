@@ -21,10 +21,10 @@ The current experiment in `main.py` uses a fixed latent size as a starting point
 - A 10-dimensional latent space.
 - A convolutional encoder and decoder.
 - Binary cross-entropy reconstruction loss with logits.
-- Beta-TCVAE weights `alpha=1`, `beta=15`, `gamma=1`.
+- Beta-TCVAE weights `alpha=<TO-BE-SET>`, `beta=<TO-BE-SET>`, `gamma=<TO-BE-SET>`.
 - A 20-epoch warmup for the TC weight.
-- Adam optimizer with learning rate `5e-4`.
-- Up to 100 training epochs with early stopping.
+- Adam optimizer with learning rate `1e-3`.
+- Up to 500 training epochs with early stopping (optional).
 
 One of the longer-term goals is to stop treating `latent_dim=10` as a manually chosen parameter and instead infer the useful latent dimensionality from the learned rate-distortion behavior of the model.
 
@@ -69,6 +69,7 @@ The dataset is split reproducibly with seed `42`:
 - `loss.py`: implements the reconstruction loss, standard VAE KL, Beta-TCVAE decomposition, and per-dimension encoder KL.
 - `helpers.py`: contains training loops, validation logic, early stopping, seeding, and data loaders.
 - `plotters.py`: saves training curves, reconstruction examples, latent traversals, and KL-per-latent plots.
+- `configs.py`: Has the configuration for the model hyperparameters, visualisation hyperparameters, etc. You can control the alpha, beta, gamma values from here.
 - `plots/tcvae/`: stores generated outputs from training and evaluation.
 
 ## Outputs
@@ -91,7 +92,7 @@ Install the Python dependencies used by the scripts:
 ```bash
 pip install torch numpy matplotlib einops tqdm
 ```
-
+You might need some other dependencies as well, please install them as you go.
 Make sure the dSprites `.npz` file is present in the project root:
 
 ```text
