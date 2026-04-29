@@ -30,13 +30,13 @@ class Config:
     weight_decay: float = 1e-3
 
     # Scheduler
-    eta_min: float = 1e-5
+    eta_min: float = 5e-5
 
     # β-TCVAE loss weights
     alpha: float = 1.0
-    beta: float = 10.0
+    beta: float = 7.0
     gamma: float = 1.0
-    beta_warmup_epochs: int = 50
+    beta_warmup_epochs: int = 100
 
     # Training
     epochs: int = 500
