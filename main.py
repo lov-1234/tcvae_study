@@ -121,7 +121,7 @@ history = train_pipeline_beta_tcvae(
     gamma=cfg.gamma,
     beta_warmup_epochs=cfg.beta_warmup_epochs,
     scheduler=scheduler,
-    # early_stopping=early_stopping,
+    early_stopping=early_stopping,
     scheduler_step_per_batch=False,
 )
 

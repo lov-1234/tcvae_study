@@ -39,7 +39,7 @@ class Config:
     beta_warmup_epochs: int = 100
 
     # Training
-    epochs: int = 500
+    epochs: int = 700
 
     # Early stopping
     es_patience: int = 50

@@ -300,7 +300,7 @@ def train_pipeline_beta_tcvae(
             f"MI: {val_mi:.4f}, TC: {val_tc:.4f}, DWKL: {val_dwkl:.4f}"
         )
 
-        if early_stopping is not None:
+        if early_stopping is not None and epoch >= beta_warmup_epochs:
             early_stopping.step(val_loss, model)
             if early_stopping.should_stop:
                 print(f"Early stopping triggered at epoch {epoch + 1}")
